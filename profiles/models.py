@@ -76,49 +76,6 @@ class Profile(User):
     def get_profile(self):
         return self
 
-
-
-
-#class ProfileForm(forms.ModelForm):
-#   def clean_username(self):
-#       return self.cleaned_data["username"].lower()
-
-
-class UserCreationForm(forms.ModelForm):
-    """
-    A form that creates a user, with no privileges, from the given username and password.
-    """
-    password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
-    password2 = forms.CharField(label=_("Password confirmation"), widget=forms.PasswordInput,
-                                help_text = _("Enter the same password as above, for verification."))
-
-    class Meta:
-        model = Profile
-        fields = ("email",)
-
-    #def clean_username(self):
-    #    username = self.cleaned_data["username"]
-    #    try:
-    #        User.objects.get(username=username)
-    #    except User.DoesNotExist:
-    #        return username
-    #    raise forms.ValidationError(_("A user with that username already exists."))
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1", "")
-        password2 = self.cleaned_data["password2"]
-        if password1 != password2:
-            raise forms.ValidationError(_("The two password fields didn't match."))
-        return password2
-
-    def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
-
-
 def encrypt_password(raw_password): 
     algo = 'sha1' 
     salt = hashlib.sha1(str(random.random())).hexdigest()[:5] 
@@ -126,7 +83,6 @@ def encrypt_password(raw_password):
     return '%s$%s$%s' % (algo, salt, hsh) 
 
 class ProfileAdmin(admin.ModelAdmin):
-    form = forms.ModelForm
     unknown_fields = ['last_login', 'date_joined',]
     fieldsets = [
         (None, {
@@ -146,7 +102,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         """
-        Use special form during user creation
+        If this is an add then remove the password help_text.
         """
         form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
         if obj is None:
@@ -156,8 +112,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def save_form(self, request, form, change):
         """
-        Given a ModelForm return an unsaved instance. ``change`` is True if
-        the object is being changed, and False if it's being added.
+        If this is an add then encrypt password .
         """
         obj = super(ProfileAdmin, self).save_form(request, form, change)
         if not change and obj.password:
