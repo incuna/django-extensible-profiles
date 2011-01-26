@@ -58,7 +58,7 @@ class Profile(User):
         super(Profile, self).save(*args, **kwargs)
 
     def get_full_name(self):
-        full_name = super(User, self).get_full_name()
+        full_name = super(Profile, self).get_full_name()
         if not full_name:
             return self.username
 

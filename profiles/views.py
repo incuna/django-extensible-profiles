@@ -42,7 +42,6 @@ def profile_edit(request, extra_context = None, next=None):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            #form.save_m2m()
             
             request.user.message_set.create(message='Your profile has been updated.')
             if next:
