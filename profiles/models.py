@@ -78,15 +78,14 @@ def encrypt_password(raw_password):
     return '%s$%s$%s' % (algo, salt, hsh) 
 
 class ProfileAdmin(admin.ModelAdmin):
-    unknown_fields = ['last_login', 'date_joined',]
     fieldsets = [
         (None, {
             'fields': ['email', 
-                       'password', 'first_name','last_name', 'is_active',  ]
+                       'password', 'first_name','last_name',  ]
         }),
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': unknown_fields,
+            'fields': ['is_active', 'last_login', 'date_joined',],
         }),
     ]
     list_display = ['email', 'first_name', 'last_name', ]
