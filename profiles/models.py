@@ -30,7 +30,6 @@ class Profile(User):
 
         here = cls.__module__.split('.')[:-1]
         here_path = '.'.join(here + ['extensions'])
-        #common_path = '.'.join(here[:-1] + ['extensions'])
 
         for ext in extensions:
             if ext in cls._profile_extensions:
@@ -42,10 +41,6 @@ class Profile(User):
                         fn = get_callable(ext + '.register', False)
                     except ImportError:
                         fn = get_callable('%s.%s.register' % ( here_path, ext ), False)
-                        #try:
-                        #    fn = get_callable('%s.%s.register' % ( here_path, ext ), False)
-                        #except ImportError:
-                        #    fn = get_callable('%s.%s.register' % ( common_path, ext ), False)
                 # Not a string, so take our chances and just try to access "register"
                 else:
                     fn = ext.register
@@ -99,6 +94,7 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = ['email',  'first_name', 'last_name',]
     readonly_fields = ['last_login', 'date_joined', ]
     list_filter = ['is_active', ]
+    list_display_filter = []
 
     def get_form(self, request, obj=None, **kwargs):
         """

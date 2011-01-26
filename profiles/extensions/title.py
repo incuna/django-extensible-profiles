@@ -12,6 +12,7 @@ TITLE_CHOICES = [('Dr','Dr'),
 
 def register(cls, admin_cls):
     cls.add_to_class('title', models.CharField(max_length=255, verbose_name=_('title'), null=True, blank=True, choices=TITLE_CHOICES))
+
     if admin_cls:
         admin_cls.list_display_filter += ['title', ]
 

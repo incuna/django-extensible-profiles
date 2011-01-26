@@ -12,10 +12,11 @@ def register(cls, admin_cls):
 
     if admin_cls:
         admin_cls.search_fields += ['address1', 'address2', 'city', 'region', 'postcode']
+        admin_cls.list_display_filter += ['country', ]
 
         if admin_cls.fieldsets:
             admin_cls.fieldsets.append((_('Address'), {
-                    'fields': ('address1', 'address2','city', 'region', 'postcode', 'country', 'telephone'),
+                    'fields': ['address1', 'address2','city', 'region', 'postcode', 'country', 'telephone'],
                     'classes': ('collapse',),
                 }))
 
