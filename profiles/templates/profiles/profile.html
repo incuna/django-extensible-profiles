@@ -1,0 +1,69 @@
+{% extends "hcpprofile/profile_base.html" %}
+
+{% block pagebody %}
+
+    {{ block.super }}
+
+    <div id="block-profile">
+        
+        
+        <div class="box-set">
+        
+            <div class="column-sub">
+                <a class="image-user" href="{% url profile %}"><img src="{% if user.picture %}{{ user.picture.url_103x113 }}{% else %}{{ STATIC_URL }}images/nobody.gif{% endif %}" alt="{{ user.get_full_name }}" /></a>
+            </div>
+            
+            <div class="column-main">
+                <a id="button-editprofile" class="button-medium" href="{% url profile-edit %}">Edit my profile</a>
+                <h4>{{ user.get_full_name }}</h4>
+                <p>{{ user.seniority }}<br>{{ user.speciality }}{% if user.sub_specialities.count %}: {{ user.sub_specialities.all|join:', ' }}{% endif %}</p>
+            </div>
+        
+        </div>
+        
+        <div class="box-set">
+            
+            <div class="column-sub">
+                Login details
+            </div>    
+                
+            <div class="column-main">
+                <p>{{ user.email }}</p>
+            </div>    
+                
+        </div>
+        
+        <div class="box-set">
+            
+            <div class="column-sub">
+                Mobile
+            </div>
+            
+            <div class="column-main">
+                <p>{{ user.telephone }}</p>
+            </div>
+            
+        </div>
+        
+        <div class="box-set">
+            
+            <div class="column-sub">
+                Work
+            </div>
+            
+            <div class="column-main">
+                <p>
+                    <b>{{ user.surgery|append_if_exists:"<br>"|safe }}</b>
+                    {{ user.address1|append_if_exists:"<br>"|safe }}
+                    {{ user.address2|append_if_exists:"<br>"|safe }}
+                    {{ user.city|append_if_exists:"<br>"|safe }}
+                    {{ user.region|append_if_exists:"<br>"|safe }}
+                    {{ user.postcode|append_if_exists:"<br>"|safe }}
+                </p>
+            </div>
+            
+        </div>
+        
+    </div>
+
+{% endblock %}

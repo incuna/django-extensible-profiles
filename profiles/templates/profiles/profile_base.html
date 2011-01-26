@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% block pagebody %}
+        {% with block.super as body_content %}
+        {% block pagetext %}
+            {{ body_content }}
+        {% endblock %}
+        {% endwith %}
+    
+        {% block profilenav %}
+            {% include 'hcpprofile/_profile_menu.html' %}
+        {% endblock %}
+    {% endblock %}
+{% endblock %}
