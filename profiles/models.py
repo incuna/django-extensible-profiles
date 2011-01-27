@@ -2,7 +2,8 @@ import hashlib,random
 
 from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
+
 from django.contrib.auth.models import User, UserManager
 from django.contrib.auth.admin import UserAdmin
 from django.core.urlresolvers import get_callable
@@ -77,7 +78,26 @@ def encrypt_password(raw_password):
     hsh = hashlib.sha1(salt+raw_password).hexdigest() 
     return '%s$%s$%s' % (algo, salt, hsh) 
 
+
+class ProfileForm(forms.ModelForm):
+    def clean_email(self):
+        """Prevent account hijacking by disallowing duplicate emails."""
+        email = self.cleaned_data.get('email', None)
+        
+        if email:
+            users = Profile.objects.filter(email__iexact=email)
+            if self.instance:
+                users = users.exclude(pk=self.instance.pk) 
+            if users.count() > 0:
+                raise forms.ValidationError(
+                    ugettext("That email address is already in use."))
+
+        return email
+
+
+
 class ProfileAdmin(admin.ModelAdmin):
+    form = ProfileForm
     fieldsets = [
         (None, {
             'fields': ['email', 
