@@ -21,6 +21,15 @@ class Profile(User):
     objects = UserManager()
 
     @classmethod
+    def remove_field(cls, f_name):
+        # Removes the field form local fields list
+        cls._meta.local_fields = [f for f in cls._meta.local_fields if f.name != f_name]
+
+        # Removes the field setter if exists
+        if hasattr(cls, f_name):
+            delattr(cls, f_name)
+
+    @classmethod
     def register_extension(cls, register_fn):
         register_fn(cls, ProfileAdmin)
 
