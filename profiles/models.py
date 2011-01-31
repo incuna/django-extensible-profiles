@@ -1,5 +1,6 @@
 import hashlib,random 
 
+from django.conf import settings
 from django.db import models
 
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -16,6 +17,16 @@ from django.contrib.admin.options import *
 
 from incuna.utils.unique_id import generate_id
 from incuna.forms import PlainPasswordUserForm
+
+if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
+
+    def get_profile(self):
+        """
+        Returns profile for this user. .
+        """
+        return self.profile
+    User.get_profile = get_profile
+
 
 class Profile(User):
     objects = UserManager()
