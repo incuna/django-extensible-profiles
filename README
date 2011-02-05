@@ -1,15 +1,12 @@
 ===================================
-Extensible user profiles for Django 
+Extensible user profiles for Django
 ===================================
 
 This is an extensible user profile system for Django, designed to provide a 
 simple user Profile model that is extensible.
 
 The concept (and some code) is borrowed from the FeinCMS 
-(https:..github.com.matthiask.feincms.) page model.
-
-
-To use simply add the app to you settigns 
+(https://github.com/matthiask/feincms) page model.
 
 To use the profiles module add profiles to your INSTALLED_APPS.
 
