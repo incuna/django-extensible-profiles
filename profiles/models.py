@@ -1,10 +1,12 @@
 import hashlib,random 
 
+from django.db import transaction
 from django.conf import settings
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from django.contrib.auth.models import User, UserManager
+from django.contrib.auth.admin import UserAdmin, csrf_protect_m
 from django.core.urlresolvers import get_callable
 from django.core.exceptions import ImproperlyConfigured
 
@@ -89,13 +91,6 @@ class Profile(User):
     def get_profile(self):
         return self
 
-def encrypt_password(raw_password): 
-    algo = 'sha1' 
-    salt = hashlib.sha1(str(random.random())).hexdigest()[:5] 
-    hsh = hashlib.sha1(salt+raw_password).hexdigest() 
-    return '%s$%s$%s' % (algo, salt, hsh) 
-
-
 class ProfileForm(forms.ModelForm):
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
@@ -113,8 +108,9 @@ class ProfileForm(forms.ModelForm):
 
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(UserAdmin):
     form = ProfileForm
+    add_form_template = None
     fieldsets = [
         (None, {
             'fields': ['email', 
@@ -131,23 +127,39 @@ class ProfileAdmin(admin.ModelAdmin):
     readonly_fields = ['last_login', 'date_joined', ]
     list_filter = ['is_active', ]
     list_display_filter = []
+    ordering = ('email',)
+
+    def get_fieldsets(self, request, obj=None):
+        # Override the UserAdmin add view and return it's parent.
+        return super(UserAdmin, self).get_fieldsets(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
         """
         If this is an add then remove the password help_text.
         """
-        form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
+        # Override the UserAdmin add view and return it's parent.
+        form = super(UserAdmin, self).get_form(request, obj=obj, **kwargs)
         if obj is None:
             form.base_fields['password'].help_text = ""
 
+        form.base_fields['email'].required = True
+        form.base_fields['first_name'].required = True
+        form.base_fields['last_name'].required = True
+
         return form
+
+    @csrf_protect_m
+    @transaction.commit_on_success
+    def add_view(self, request, form_url='', extra_context=None):
+        # Override the UserAdmin add view and return it's parent.
+        return super(UserAdmin, self).add_view(request, form_url, extra_context)
 
     def save_form(self, request, form, change):
         """
-        If this is an add then encrypt password .
+        If this is an add then set the password .
         """
-        obj = super(ProfileAdmin, self).save_form(request, form, change)
-        if not change and obj.password:
-            obj.password = encrypt_password(obj.password)
-        return obj
+        user = super(ProfileAdmin, self).save_form(request, form, change)
+        if not change and user.password:
+            user.set_password(user.password)
+        return user
 
