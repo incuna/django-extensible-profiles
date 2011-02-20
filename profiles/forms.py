@@ -24,7 +24,7 @@ class ProfileForm(UserChangeForm):
         
         if email:
             users = Profile.objects.filter(email__iexact=email)
-            if self.instance:
+            if self.instance and self.instance.pk:
                 users = users.exclude(pk=self.instance.pk) 
             if users.count() > 0:
                 raise forms.ValidationError(
