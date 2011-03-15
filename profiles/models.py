@@ -5,6 +5,7 @@ from django.conf import settings
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+import traceback
 from django.contrib.auth.models import User, UserManager
 from django.contrib.auth.admin import UserAdmin, csrf_protect_m
 from django.core.urlresolvers import get_callable
@@ -68,8 +69,9 @@ class Profile(User):
                 cls.register_extension(fn)
                 cls._profile_extensions.add(ext)
             except Exception, e:
-                raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception" %
-                                            (cls.__name__, ext, e.message))
+                raise 
+                #raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception %s" %
+                #                            (cls.__name__, ext, e.message, traceback.format_exc()))
 
     def save(self, *args, **kwargs):
         if not self.username:
