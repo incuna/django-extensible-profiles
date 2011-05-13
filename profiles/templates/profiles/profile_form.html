@@ -23,7 +23,7 @@
         {% block formfields %}
             {% for field in form %}
                 {% ifequal field.name "picture" %}
-                    <img class="image-user" src="{% if user.picture %}{{ user.picture.url_103x113 }}{% else %}{{ MEDIA_URL }}images/nobody.gif{% endif %}" alt="{{ user.get_full_name }}">
+                    <img class="image-user" src="{% if user.picture %}{{ user.picture.url_103x113 }}{% else %}{{ STATIC_URL }}images/nobody.gif{% endif %}" alt="{{ user.get_full_name }}">
                 {% endifequal %}
                 
                 {% render_as_p field %}
