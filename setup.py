@@ -5,7 +5,7 @@ def fread(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "profiles",
+    name = "django-profiles",
     packages = find_packages(),
     include_package_data=True,
     version = "0.1",
