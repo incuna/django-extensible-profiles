@@ -4,6 +4,7 @@ from setuptools import find_packages, setup
 def fread(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+from profiles import get_version
 setup(
     name = "django-profiles",
     packages = find_packages(),
