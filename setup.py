@@ -1,10 +1,11 @@
-import os
+from os.path import dirname, join
 from setuptools import find_packages, setup
 
-def fread(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
 from profiles import get_version
+
+def fread(fname):
+    return open(join(dirname(__file__), fname)).read()
+
 setup(
     name = "django-profiles",
     packages = find_packages(),
@@ -16,3 +17,4 @@ setup(
     url = "http://incuna.com/",
     long_description=fread("README"),
 )
+
