@@ -7,7 +7,7 @@ def fread(fname):
     return open(join(dirname(__file__), fname)).read()
 
 setup(
-    name = "django-profiles",
+    name = "django-extensible-profiles",
     packages = find_packages(),
     include_package_data=True,
     version = get_version(),
