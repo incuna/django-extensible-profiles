@@ -4,7 +4,8 @@ from setuptools import find_packages, setup
 from profiles import get_version
 
 def fread(fname):
-    return open(join(dirname(__file__), fname)).read()
+    with open(join(dirname(__file__), fname), 'r') as f:
+        return f.read()
 
 setup(
     name = "django-extensible-profiles",
