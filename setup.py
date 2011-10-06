@@ -15,6 +15,6 @@ setup(
     author = "Incuna Ltd",
     author_email = "admin@incuna.com",
     url = "http://incuna.com/",
-    long_description=fread("README"),
+    long_description=fread("README.markdown"),
 )
 
