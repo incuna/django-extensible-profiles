@@ -1,47 +1,33 @@
-===================================
-Extensible user profiles for Django
-===================================
+## Extensible user profiles for Django
 
-This is an extensible user profile system for Django, designed to provide a 
-simple user Profile model that is extensible.
+This is an extensible user profile system for Django, designed to provide a simple user Profile model that is extensible.
 
-The concept (and some code) is borrowed from the FeinCMS 
-(https://github.com/matthiask/feincms) page model.
+The concept (and some code) is borrowed from the FeinCMS (https://github.com/matthiask/feincms) page model.
 
 To use the profiles module add profiles to your INSTALLED_APPS.
 
-Before proceeding with manage.py syncdb, you must add some profile extensions. 
-The profiles module does not add anything to the User model by default.
+Before proceeding with manage.py syncdb, you must add some profile extensions. The profiles module does not add anything to the User model by default.
 
 
-Profile extension modules
-=========================
+### Profile extension modules
 
-Extensions are a way to add often-used functionality the Profile model. The 
-extensions are standard python modules with a register() method which will be 
-called upon registering the extension. The register() method receives the 
-Profile class itself and the model admin class ProfileAdmin as arguments. 
+Extensions are a way to add often-used functionality the Profile model. The extensions are standard python modules with a register() method which will be called upon registering the extension. The register() method receives the Profile class itself and the model admin class ProfileAdmin as arguments.
 
 The extensions can be activated by adding the following to a models.py file that will be processed anyway:
 
-::
     from profiles.models import Profile
-    Profile.register_extensions('title', 'picture', 'address', 'profiles.modules.options.extensions.options') 
+    Profile.register_extensions('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
 
 
-If the extension requires it's own models (like the options extension) then 
-the app containing the models will also need to be added to your INSTALLED_APPS.
+If the extension requires it's own models (like the options extension) then the app containing the models will also need to be added to your INSTALLED_APPS.
 
-Adding extensions
-=================
+### Adding extensions
 
-To add an extension create a python module that defines a register function 
-that accepts the Profile class and the ProfileAdmin class as arguments and 
-modifies them as required.
+To add an extension create a python module that defines a register function that accepts the Profile class and the ProfileAdmin class as arguments and modifies them as required.
 
 Here is the address extension (profiles/extensions/address.py):
 
-::
+
     from django.db import models
     from django.utils.translation import ugettext_lazy as _
 
@@ -65,6 +51,6 @@ Here is the address extension (profiles/extensions/address.py):
                     }))
 
 
-Dependencies
-=================
+### Dependencies
+
 Add 'incuna.countries' to INSTALLED_APPS for using address extension.
