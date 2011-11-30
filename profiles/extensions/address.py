@@ -11,7 +11,7 @@ def register(cls, admin_cls):
     cls.add_to_class('telephone', models.CharField(max_length=32, verbose_name=_('telephone'), null=True, blank=True))
 
     if admin_cls:
-        admin_cls.search_fields += ['address1', 'address2', 'city', 'region', 'postcode']
+        admin_cls.search_fields += ['address1', 'address2', 'city', 'region', 'postcode', 'telephone']
         admin_cls.list_display_filter += ['country', ]
 
         if admin_cls.fieldsets:
