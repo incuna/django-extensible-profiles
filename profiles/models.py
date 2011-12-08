@@ -30,6 +30,7 @@ if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MOD
 
 class Profile(User):
     objects = UserManager()
+    _extensions_imported = False
 
     @classmethod
     def remove_field(cls, f_name):
@@ -165,3 +166,9 @@ class ProfileAdmin(UserAdmin):
             user.set_password(user.password)
         return user
 
+
+# Register extensions listed in the settings
+PROFILE_EXTENSIONS = getattr(settings, 'PROFILE_EXTENSIONS', None)
+if PROFILE_EXTENSIONS and not Profile._extensions_imported:
+    Profile.register_extensions(*PROFILE_EXTENSIONS)
+    Profile._extensions_imported = True
