@@ -13,7 +13,11 @@ Before proceeding with manage.py syncdb, you must add some profile extensions. T
 
 Extensions are a way to add often-used functionality the Profile model. The extensions are standard python modules with a register() method which will be called upon registering the extension. The register() method receives the Profile class itself and the model admin class ProfileAdmin as arguments.
 
-The extensions can be activated by adding the following to a models.py file that will be processed anyway:
+To register extensions, simply pop a list of them in your settings.py:
+
+    PROFILE_EXTENSIONS = ('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
+
+For backwards compatibility, extensions can be activated by adding the following to a models.py file that will be processed anyway. eg:
 
     from profiles.models import Profile
     Profile.register_extensions('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
