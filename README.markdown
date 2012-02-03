@@ -1,4 +1,4 @@
-## Extensible user profiles for Django
+## Extensible user profiles for Django
 
 This is an extensible user profile system for Django, designed to provide a simple user Profile model that is extensible.
 
@@ -9,7 +9,7 @@ To use the profiles module add profiles to your INSTALLED_APPS.
 Before proceeding with manage.py syncdb, you must add some profile extensions. The profiles module does not add anything to the User model by default.
 
 
-### Profile extension modules
+### Profile extension modules
 
 Extensions are a way to add often-used functionality the Profile model. The extensions are standard python modules with a register() method which will be called upon registering the extension. The register() method receives the Profile class itself and the model admin class ProfileAdmin as arguments.
 
