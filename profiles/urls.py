@@ -1,8 +1,10 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
+
+from profiles.views import ProfileView
 
 
 urlpatterns = patterns('profiles.views',
-    url(r'^$', 'profile', name='profile'),
+    url(r'^$', ProfileView.as_view(), name='profile'),
     url(r'^edit/$', 'profile_edit', name='profile-edit'),
 )
+
