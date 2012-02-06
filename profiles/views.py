@@ -2,10 +2,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
+from django.utils.datastructures import MultiValueDictKeyError
 from incuna.utils import get_class_from_path
 
 from profiles.models import Profile
@@ -22,35 +20,29 @@ class ProfileView(TemplateView):
     template_name = 'profiles/profile.html'
 
 
-@login_required
-def profile_edit(request, extra_context = None, next=None):
+@class_view_decorator(login_required)
+class ProfileEdit(FormView):
+    form_class = ProfileForm
+    template_name = 'profiles/profile_form.html'
 
-    context = RequestContext(request)
+    def form_valid(self, form):
+        instance = super(ProfileEdit, self).form_valid(form)
+        self.request.user.message_set.create(message='Your profile has been updated.')
+        return instance
 
-    if extra_context != None:
-        context.update(extra_context)
+    def get_context_data(self, **kwargs):
+        context = super(ProfileEdit, self).get_context_data(**kwargs)
+        context['site'] = Site.objects.get_current()
+        return context
 
-    if isinstance(request.user, Profile):
-        profile = request.user
-    else:
-        profile = request.user.profile
+    def get_object(self):
+        if isinstance(self.request.user, Profile):
+            return self.request.user
+        return self.request.user.profile
 
-    if request.POST or request.FILES:
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
-
-            request.user.message_set.create(message='Your profile has been updated.')
-            if next:
-                return HttpResponseRedirect(next)
-            else:
-                return HttpResponseRedirect(reverse('profile'))
-
-    else:
-        form = ProfileForm(instance=profile)
-
-    context['form'] = form
-    context['site'] = Site.objects.get_current()
-
-    return render_to_response('profiles/profile_form.html', context)
+    def get_success_url(self):
+        try:
+            return self.request.GET['next']
+        except MultiValueDictKeyError:
+            return reverse('profile')
 
