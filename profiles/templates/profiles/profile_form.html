@@ -1,42 +1,9 @@
 {% extends "profiles/profile_base.html" %}
 
-{% load form_utils %}
-
-{% block extrahead %}
-    {{ block.super }}
-    {{ form.media }}
-{% endblock %}
-
-
-{% block pagebody %}
-
-{{ block.super }}
-
-{% block pagetext %}{% endblock %}
-
-<div id="block-editprofile">
-        
-    <form id="form-editprofile" class="hform" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
-        <div class="fields">
-        {{ form.non_field_errors }}
-        
-        {% block formfields %}
-            {% for field in form %}
-                {% ifequal field.name "picture" %}
-                    <img class="image-user" src="{% if user.picture %}{{ user.picture.url_103x113 }}{% else %}{{ STATIC_URL }}images/nobody.gif{% endif %}" alt="{{ user.get_full_name }}">
-                {% endifequal %}
-                
-                {% render_as_p field %}
-                
-            {% endfor %}
-        {% endblock %}
-        </div>
-        
-        <p class="buttons">
-            {% block formbuttons %}<input class="button-large" type="submit" value="Save my profile">{% endblock %}
-        </p>
-    </form>
-
-</div>
-
+{% block content %}
+<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
 {% endblock %}
