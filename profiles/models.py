@@ -1,29 +1,17 @@
-import hashlib,random 
-
-from django.db import transaction
 from django.conf import settings
-
-from django.utils.translation import ugettext, ugettext_lazy as _
-
-import traceback
-from django.contrib.auth.models import User, UserManager
 from django.contrib.auth.admin import UserAdmin, csrf_protect_m
+from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import get_callable
-from django.core.exceptions import ImproperlyConfigured
-
-from django import forms
-
-from django.contrib import admin
-from django.contrib.admin.options import *
-
+from django.db import transaction
+from django.utils.translation import ugettext as _
 from incuna.utils.unique_id import generate_id
 
-if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
+from profiles.forms import ProfileAdminForm
 
+
+if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
     def get_profile(self):
-        """
-        Returns profile for this user. .
-        """
+        """Returns profile for this user."""
         return self.profile
     User.get_profile = get_profile
 
@@ -69,54 +57,31 @@ class Profile(User):
 
                 cls.register_extension(fn)
                 cls._profile_extensions.add(ext)
-            except Exception, e:
-                raise 
-                #raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception %s" %
-                #                            (cls.__name__, ext, e.message, traceback.format_exc()))
+            except Exception:
+                raise
 
     def save(self, *args, **kwargs):
         if not self.username:
-            self.username = generate_id(first_name=self.first_name, last_name=self.last_name, email=self.email)
-
+            self.username = generate_id(first_name=self.first_name,
+                                        last_name=self.last_name, email=self.email)
         super(Profile, self).save(*args, **kwargs)
 
     def get_full_name(self):
         full_name = super(Profile, self).get_full_name()
         if not full_name:
             return self.username
-
-        #if self.title:
-        #    full_name = u'%s %s' % (self.title, full_name)
-
         return full_name
-
 
     def get_profile(self):
         return self
 
-class ProfileForm(forms.ModelForm):
-    def clean_email(self):
-        """Prevent account hijacking by disallowing duplicate emails."""
-        email = self.cleaned_data.get('email', None)
-        
-        if email:
-            users = Profile.objects.filter(email__iexact=email)
-            if self.instance:
-                users = users.exclude(pk=self.instance.pk) 
-            if users.count() > 0:
-                raise forms.ValidationError(
-                    ugettext("That email address is already in use."))
-
-        return email
-
-
 
 class ProfileAdmin(UserAdmin):
-    form = ProfileForm
+    form = ProfileAdminForm
     add_form_template = None
     fieldsets = [
         (None, {
-            'fields': ['email', 
+            'fields': ['email',
                        'password', 'first_name','last_name',  ]
         }),
         (_('Other options'), {
@@ -137,9 +102,7 @@ class ProfileAdmin(UserAdmin):
         return super(UserAdmin, self).get_fieldsets(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
-        """
-        If this is an add then remove the password help_text.
-        """
+        """If this is an add then remove the password help_text. """
         # Override the UserAdmin add view and return it's parent.
         form = super(UserAdmin, self).get_form(request, obj=obj, **kwargs)
         if obj is None:
@@ -148,7 +111,6 @@ class ProfileAdmin(UserAdmin):
         form.base_fields['email'].required = True
         form.base_fields['first_name'].required = True
         form.base_fields['last_name'].required = True
-
         return form
 
     @csrf_protect_m
@@ -158,9 +120,7 @@ class ProfileAdmin(UserAdmin):
         return super(UserAdmin, self).add_view(request, form_url, extra_context)
 
     def save_form(self, request, form, change):
-        """
-        If this is an add then set the password .
-        """
+        """If this is an add then set the password."""
         user = super(ProfileAdmin, self).save_form(request, form, change)
         if not change and user.password:
             user.set_password(user.password)
@@ -172,3 +132,4 @@ PROFILE_EXTENSIONS = getattr(settings, 'PROFILE_EXTENSIONS', None)
 if PROFILE_EXTENSIONS and not Profile._extensions_imported:
     Profile.register_extensions(*PROFILE_EXTENSIONS)
     Profile._extensions_imported = True
+
