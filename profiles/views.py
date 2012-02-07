@@ -2,8 +2,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.views.generic import FormView, TemplateView
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.generic import TemplateView, UpdateView
 from incuna.utils import get_class_from_path
 
 from profiles.models import Profile
@@ -21,7 +21,7 @@ class ProfileView(TemplateView):
 
 
 @class_view_decorator(login_required)
-class ProfileEdit(FormView):
+class ProfileEdit(UpdateView):
     form_class = ProfileForm
     template_name = 'profiles/profile_form.html'
 
