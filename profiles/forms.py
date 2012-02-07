@@ -39,17 +39,3 @@ class ProfileForm(UserChangeForm):
 
         return email
 
-
-class ProfileAdminForm(forms.ModelForm):
-    def clean_email(self):
-        """Prevent account hijacking by disallowing duplicate emails."""
-        email = self.cleaned_data.get('email', None)
-
-        if email:
-            users = Profile.objects.filter(email__iexact=email)
-            if self.instance:
-                users = users.exclude(pk=self.instance.pk)
-            if users.count() > 0:
-                raise forms.ValidationError(_('That email address is already in use.'))
-        return email
-

@@ -1,3 +1,4 @@
+from django import forms
 from django.conf import settings
 from django.contrib.auth.admin import UserAdmin, csrf_protect_m
 from django.contrib.auth.models import User, UserManager
@@ -5,8 +6,6 @@ from django.core.urlresolvers import get_callable
 from django.db import transaction
 from django.utils.translation import ugettext as _
 from incuna.utils.unique_id import generate_id
-
-from profiles.forms import ProfileAdminForm
 
 
 if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
@@ -76,6 +75,21 @@ class Profile(User):
         return self
 
 
+
+class ProfileAdminForm(forms.ModelForm):
+    def clean_email(self):
+        """Prevent account hijacking by disallowing duplicate emails."""
+        email = self.cleaned_data.get('email', None)
+
+        if email:
+            users = Profile.objects.filter(email__iexact=email)
+            if self.instance:
+                users = users.exclude(pk=self.instance.pk)
+            if users.count() > 0:
+                raise forms.ValidationError(_('That email address is already in use.'))
+        return email
+
+
 class ProfileAdmin(UserAdmin):
     form = ProfileAdminForm
     add_form_template = None
@@ -102,11 +116,11 @@ class ProfileAdmin(UserAdmin):
         return super(UserAdmin, self).get_fieldsets(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
-        """If this is an add then remove the password help_text. """
+        """If this is an add then remove the password help_text."""
         # Override the UserAdmin add view and return it's parent.
         form = super(UserAdmin, self).get_form(request, obj=obj, **kwargs)
         if obj is None:
-            form.base_fields['password'].help_text = ""
+            form.base_fields['password'].help_text = ''
 
         form.base_fields['email'].required = True
         form.base_fields['first_name'].required = True
