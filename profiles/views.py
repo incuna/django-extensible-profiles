@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import TemplateView, UpdateView
 from incuna.utils import get_class_from_path
 
@@ -41,8 +40,5 @@ class ProfileEdit(UpdateView):
         return self.request.user.profile
 
     def get_success_url(self):
-        try:
-            return self.request.GET['next']
-        except MultiValueDictKeyError:
-            return reverse('profile')
+        return self.request.GET.get('next', reverse('profile'))
 
