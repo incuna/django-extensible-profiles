@@ -1,14 +1,48 @@
 from django import forms
+from django.conf import settings
+from django.db.models import get_model
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext as _
 
 from profiles.models import Profile
 
 
-class ProfileForm(forms.Form):
-    password1 = forms.CharField(label=_('Password'), required=False, widget=forms.PasswordInput)
-    password2 = forms.CharField(label=_('Password confirmation'), required=False, widget=forms.PasswordInput)
+try:
+    user_model = get_model(*settings.CUSTOM_USER_MODEL.split('.', 2))
+except AttributeError:
+    from django.contrib.auth.models import User as user_model
 
+class UserChangeForm(forms.ModelForm):
+    password1 = forms.CharField(label=_('Password'), required=False,
+                                widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_('Password confirmation'),
+                                required=False, widget=forms.PasswordInput)
+
+    class Meta:
+        model = user_model
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        password1 = cleaned_data.get('password1', '')
+        password2 = cleaned_data.get('password2', '')
+        if password1 != password2:
+            msg = u'The password fields did not match.'
+            self._errors['password2'] = ErrorList([msg])
+            del cleaned_data['password1']
+            del cleaned_data['password2']
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super(UserChangeForm, self).save(commit=False)
+        if self.cleaned_data['password1'] and self.cleaned_data['password2']:
+            user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+
+class ProfileForm(UserChangeForm):
     class Meta:
         model = Profile
         exclude = (
@@ -29,18 +63,6 @@ class ProfileForm(forms.Form):
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
 
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        password1 = cleaned_data.get('password1', '')
-        password2 = cleaned_data.get('password2', '')
-        if password1 != password2:
-            msg = u'The password fields did not match.'
-            self._errors['password2'] = ErrorList([msg])
-            del cleaned_data['password1']
-            del cleaned_data['password2']
-
-        return cleaned_data
-
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
         email = self.cleaned_data.get('email', None)
@@ -53,12 +75,4 @@ class ProfileForm(forms.Form):
                 raise forms.ValidationError(_('That email address is already in use.'))
 
         return email
-
-    def save(self, commit=True):
-        user = super(ProfileForm, self).save(commit=False)
-        if self.cleaned_data['password1'] and self.cleaned_data['password2']:
-            user.set_password(self.cleaned_data['password1'])
-        if commit:
-            user.save()
-        return user
 
