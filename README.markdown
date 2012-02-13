@@ -57,4 +57,4 @@ Here is the address extension (profiles/extensions/address.py):
 
 ### Dependencies
 
-Add 'incuna.countries' to INSTALLED_APPS for using address extension.
+The address extension requires [`incuna-countries`](http://github.com/incuna/incuna-countries). Add `countries` to your `INSTALLED_APPS`.
