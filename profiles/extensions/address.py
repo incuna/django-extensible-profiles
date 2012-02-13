@@ -1,5 +1,12 @@
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+
+if 'countries' not in settings.INSTALLED_APPS:
+    raise ImproperlyConfigured("The address extension requires incuna-countries (http://github.com/incuna/incuna-countries) - ensure that 'countries' is added to your INSTALLED_APPS.")
+
 
 def register(cls, admin_cls):
     cls.add_to_class('address1', models.CharField(max_length=255, verbose_name=_('address'), null=True, blank=True))
