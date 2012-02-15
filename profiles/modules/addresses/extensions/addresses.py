@@ -12,4 +12,4 @@ def register(cls, admin_cls):
             model = Address
             extra = 1
 
-        admin_cls.inlines.append(AddressInline)
+        admin_cls.inlines = admin_cls.inlines + [AddressInline]
