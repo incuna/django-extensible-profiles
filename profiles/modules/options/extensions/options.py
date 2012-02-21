@@ -12,4 +12,4 @@ def register(cls, admin_cls):
                     'fields': ['options',],
                     'classes': ('collapse',),
                 }))
-
+            admin_cls.filter_horizontal = admin_cls.filter_horizontal + ('options',)
