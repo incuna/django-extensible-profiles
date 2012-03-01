@@ -22,7 +22,6 @@ class ProfileView(TemplateView):
 @class_view_decorator(login_required)
 class ProfileEdit(UpdateView):
     form_class = ProfileForm
-    template_name = 'profiles/profile_form.html'
 
     def form_valid(self, form):
         instance = super(ProfileEdit, self).form_valid(form)
