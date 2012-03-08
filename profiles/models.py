@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin, csrf_protect_m
 from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import get_callable
 from django.db import transaction
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from incuna.utils.unique_id import generate_id
 
 

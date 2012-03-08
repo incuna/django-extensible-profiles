@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from django.db.models import get_model
 from django.forms.util import ErrorList
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from profiles.models import Profile
 
