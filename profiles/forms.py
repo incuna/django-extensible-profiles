@@ -39,6 +39,7 @@ class UserChangeForm(forms.ModelForm):
             user.set_password(self.cleaned_data['password1'])
         if commit:
             user.save()
+            self.save_m2m()
         return user
 
 

@@ -24,9 +24,9 @@ class ProfileEdit(UpdateView):
     form_class = ProfileForm
 
     def form_valid(self, form):
-        instance = super(ProfileEdit, self).form_valid(form)
+        response = super(ProfileEdit, self).form_valid(form)
         self.request.user.message_set.create(message='Your profile has been updated.')
-        return instance
+        return response
 
     def get_context_data(self, **kwargs):
         context = super(ProfileEdit, self).get_context_data(**kwargs)
