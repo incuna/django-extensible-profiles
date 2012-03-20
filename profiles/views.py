@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
@@ -25,7 +26,7 @@ class ProfileEdit(UpdateView):
 
     def form_valid(self, form):
         response = super(ProfileEdit, self).form_valid(form)
-        self.request.user.message_set.create(message='Your profile has been updated.')
+        messages.info(self.request, 'Your profile has been updated.')
         return response
 
     def get_context_data(self, **kwargs):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from incuna.db.models import Orderable
 
@@ -13,5 +14,5 @@ class Option(Orderable):
         ordering = ('sort_order',)
    
     def __unicode__(self):
-        return self.name
+        return mark_safe(self.name)
 
