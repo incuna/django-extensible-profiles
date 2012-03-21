@@ -6,6 +6,11 @@ from django.core.urlresolvers import get_callable
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from incuna.utils.unique_id import generate_id
+try:
+    # Django >= 1.4
+    from django.contrib.auth.forms import ReadOnlyPasswordHashField as PasswordField
+except ImportError:
+    from django.forms import CharField as PasswordField
 
 
 if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
@@ -77,6 +82,11 @@ class Profile(User):
 
 
 class ProfileAdminForm(forms.ModelForm):
+
+    def clean_password(self):
+        """Prevent the user from setting a non-hashed nonsense password"""
+        return self.initial["password"]
+
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
         email = self.cleaned_data.get('email', None)
@@ -94,15 +104,26 @@ class ProfileAdmin(UserAdmin):
     form = ProfileAdminForm
     add_form_template = None
     fieldsets = [
-        (None, {
-            'fields': ['email',
-                       'password', 'first_name','last_name',  ]
-        }),
+        (None, {'fields': ['email', 'password', 'first_name','last_name',]}), # note no username
+
+        #Commented because I'm considering adding these back in - JT
+        #(_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+        #                               'groups', 'user_permissions')}),
+        #(_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+
         (_('Other options'), {
             'classes': ['collapse',],
             'fields': ['is_active', 'last_login', 'date_joined',],
         }),
     ]
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2')}
+        ),
+    )
+
     list_display = ['email', 'first_name', 'last_name', ]
     list_display_links = ['email',]
     search_fields = ['email',  'first_name', 'last_name',]
@@ -111,34 +132,22 @@ class ProfileAdmin(UserAdmin):
     list_display_filter = []
     ordering = ('email',)
 
-    def get_fieldsets(self, request, obj=None):
-        # Override the UserAdmin add view and return it's parent.
-        return super(UserAdmin, self).get_fieldsets(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
-        """If this is an add then remove the password help_text."""
-        # Override the UserAdmin add view and return it's parent.
-        form = super(UserAdmin, self).get_form(request, obj=obj, **kwargs)
-        if obj is None:
-            form.base_fields['password'].help_text = ''
+        form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
 
+        form.base_fields['username'].required = False
         form.base_fields['email'].required = True
-        form.base_fields['first_name'].required = True
-        form.base_fields['last_name'].required = True
+        if obj:
+            form.base_fields['first_name'].required = True
+            form.base_fields['last_name'].required = True
+
+            form.base_fields['password'] = PasswordField(label=_("Password"),
+                    help_text=_("Raw passwords are not stored, so there is no way to see "
+                                "this user's password, but you can change the password "
+                                "using <a href=\"password/\">this form</a>."))
+
         return form
-
-    @csrf_protect_m
-    @transaction.commit_on_success
-    def add_view(self, request, form_url='', extra_context=None):
-        # Override the UserAdmin add view and return it's parent.
-        return super(UserAdmin, self).add_view(request, form_url, extra_context)
-
-    def save_form(self, request, form, change):
-        """If this is an add then set the password."""
-        user = super(ProfileAdmin, self).save_form(request, form, change)
-        if not change and user.password:
-            user.set_password(user.password)
-        return user
 
 
 # Register extensions listed in the settings
