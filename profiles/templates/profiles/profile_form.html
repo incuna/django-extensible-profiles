@@ -1,5 +1,10 @@
 {% extends "profiles/profile_base.html" %}
 
+{% block extra_script %}
+{{ block.super }}
+{{ form.media }}
+{% endblock extra_script %}
+
 {% block content %}
 <form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
     {{ form.non_field_errors }}
