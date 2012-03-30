@@ -1,13 +1,12 @@
 from django import forms
 from django.conf import settings
-from django.contrib.auth.admin import UserAdmin, csrf_protect_m
 from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import get_callable
-from django.db import transaction
+from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from incuna.utils.unique_id import generate_id
 
-
+ModelAdmin = get_callable(getattr(settings, 'PROFILE_MODELADMIN_CLASS', 'django.contrib.admin.ModelAdmin'))
 if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
     def get_profile(self):
         """Returns profile for this user."""
@@ -74,9 +73,37 @@ class Profile(User):
     def get_profile(self):
         return self
 
+# This form is here to avoid a cyclic import between models and forms
+class BasePasswordChangeForm(forms.ModelForm):
+    password1 = forms.CharField(label=_('Password'), required=False,
+                                widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_('Password confirmation'),
+                                required=False, widget=forms.PasswordInput)
+
+    def clean(self):
+       cleaned_data = self.cleaned_data
+       password1 = cleaned_data.get('password1', '')
+       password2 = cleaned_data.get('password2', '')
+       if password1 != password2:
+           msg = u'The password fields did not match.'
+           self._errors['password2'] = ErrorList([msg])
+           del cleaned_data['password1']
+           del cleaned_data['password2']
+
+       return cleaned_data
+
+    def save(self, commit=True):
+       user = super(BasePasswordChangeForm, self).save(commit=False)
+       if self.cleaned_data['password1'] and self.cleaned_data['password2']:
+           user.set_password(self.cleaned_data['password1'])
+       if commit:
+           user.save()
+           self.save_m2m()
+       return user
 
 
-class ProfileAdminForm(forms.ModelForm):
+class BaseProfileAdminForm(BasePasswordChangeForm):
+
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
         email = self.cleaned_data.get('email', None)
@@ -90,13 +117,12 @@ class ProfileAdminForm(forms.ModelForm):
         return email
 
 
-class ProfileAdmin(UserAdmin):
-    form = ProfileAdminForm
+class ProfileAdmin(ModelAdmin):
     add_form_template = None
     fieldsets = [
         (None, {
-            'fields': ['email',
-                       'password', 'first_name','last_name',  ]
+            'fields': ['email', #'password1', 'password2', 
+                       'first_name','last_name',  ]
         }),
         (_('Other options'), {
             'classes': ['collapse',],
@@ -109,35 +135,43 @@ class ProfileAdmin(UserAdmin):
     readonly_fields = ['last_login', 'date_joined', ]
     list_filter = ['is_active', ]
     list_display_filter = []
-    ordering = ('email',)
+    search_fields = ['first_name', 'last_name', 'email']
+    ordering = ['email',]
 
-    def get_fieldsets(self, request, obj=None):
-        # Override the UserAdmin add view and return it's parent.
-        return super(UserAdmin, self).get_fieldsets(request, obj)
+    #def get_fieldsets(self, request, obj=None):
+    #    # Delay adding the password fields as they cause validation errors
+    #    fieldsets =  super(ProfileAdmin, self).get_fieldsets(request, obj=obj)
+    #    # Insert the password fields  
+    #    fieldsets[0][1]['fields'][1:1] = ['password1', 'password2']
+
+    #    return fieldsets
 
     def get_form(self, request, obj=None, **kwargs):
-        """If this is an add then remove the password help_text."""
-        # Override the UserAdmin add view and return it's parent.
-        form = super(UserAdmin, self).get_form(request, obj=obj, **kwargs)
-        if obj is None:
-            form.base_fields['password'].help_text = ''
+        # Delay creation of the ProfileAdminForm until we have a 'final'
+        # model to base it on
+
+        class ProfileAdminForm(BaseProfileAdminForm):
+            class Meta:
+                model = Profile
+        self.form = ProfileAdminForm
+
+        # TODO: Delay adding the password fields as they cause validation errors
+        if not 'password1' in self.fieldsets[0][1]['fields']:
+            self.fieldsets[0][1]['fields'][1:1] = ['password1', 'password2']
+
+        form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
 
         form.base_fields['email'].required = True
         form.base_fields['first_name'].required = True
         form.base_fields['last_name'].required = True
         return form
 
-    @csrf_protect_m
-    @transaction.commit_on_success
-    def add_view(self, request, form_url='', extra_context=None):
-        # Override the UserAdmin add view and return it's parent.
-        return super(UserAdmin, self).add_view(request, form_url, extra_context)
-
     def save_form(self, request, form, change):
         """If this is an add then set the password."""
         user = super(ProfileAdmin, self).save_form(request, form, change)
-        if not change and user.password:
-            user.set_password(user.password)
+        password = form.cleaned_data.get('password1', None);
+        if password:
+            user.set_password(password)
         return user
 
 
