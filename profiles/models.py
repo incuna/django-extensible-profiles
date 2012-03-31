@@ -75,6 +75,9 @@ class Profile(User):
 
 # This form is here to avoid a cyclic import between models and forms
 class BasePasswordChangeForm(forms.ModelForm):
+    """
+    Model form that includes password fields and sets password on save.
+    """
     password1 = forms.CharField(label=_('Password'), required=False,
                                 widget=forms.PasswordInput)
     password2 = forms.CharField(label=_('Password confirmation'),
@@ -94,22 +97,25 @@ class BasePasswordChangeForm(forms.ModelForm):
 
     def save(self, commit=True):
        user = super(BasePasswordChangeForm, self).save(commit=False)
-       if self.cleaned_data['password1'] and self.cleaned_data['password2']:
-           user.set_password(self.cleaned_data['password1'])
+       password = self.cleaned_data.get('password1', None)
+       if password:
+           user.set_password(password)
        if commit:
            user.save()
            self.save_m2m()
        return user
 
 
-class ProfileAdminForm(BasePasswordChangeForm):
-
+class EmailFormMixin(object):
+    """
+    Form mixin to ensure that the email is unique.
+    """
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
         email = self.cleaned_data.get('email', None)
 
         if email:
-            users = Profile.objects.filter(email__iexact=email)
+            users = User.objects.filter(email__iexact=email)
             if self.instance:
                 users = users.exclude(pk=self.instance.pk)
             if users.count() > 0:
@@ -117,11 +123,14 @@ class ProfileAdminForm(BasePasswordChangeForm):
         return email
 
 
+class ProfileAdminForm(EmailFormMixin, BasePasswordChangeForm):
+    pass
+
+
 class ProfileAdmin(ModelAdmin):
     fieldsets = [
         (None, {
-            'fields': ['email', #'password1', 'password2', 
-                       'first_name','last_name',  ]
+            'fields': ['email', 'first_name','last_name',  ]
         }),
         (_('Other options'), {
             'classes': ['collapse',],
@@ -140,35 +149,32 @@ class ProfileAdmin(ModelAdmin):
     required_fields = ['email', 'first_name', 'last_name']
 
     def get_form(self, request, obj=None, **kwargs):
-        # Delay setting the ProfileAdminForm.
-        # If form is added to the model then it cause validation error due to 
-        # the fields not form fields and admin fieldsets not being consistent.
-        self.form = ProfileAdminForm
 
-        # Delay adding the password fields until the form is set.
-        fields = self.fieldsets[0][1]['fields']
-        try:
-            index = fields.index('email') + 1
-        except ValueError:
-            index = len(fields)
-        if not 'password1' in fields:
-            fields[index:index] = ['password1', 'password2']
+        if not issubclass(self.form, ProfileAdminForm):
+            # Delay setting the ProfileAdminForm.
+            # If form is added to the ProfileAdmin class then it cause 
+            # validation error due to the form fields and admin fieldsets 
+            # not being consistent.
+
+            self.form = ProfileAdminForm
+
+            # Delay adding the password fields until the form is set.
+            fields = self.fieldsets[0][1]['fields']
+            try:
+                index = fields.index('email') + 1
+            except ValueError:
+                index = len(fields)
+            if not 'password1' in fields:
+                fields[index:index] = ['password1', 'password2']
 
         # Create the form 
         form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
 
-        for fname in []:
+        # Set required fields
+        for fname in self.required_fields:
             form.base_fields[fname].required = True
 
         return form
-
-    def save_form(self, request, form, change):
-        """If this is an add then set the password."""
-        user = super(ProfileAdmin, self).save_form(request, form, change)
-        password = form.cleaned_data.get('password1', None);
-        if password:
-            user.set_password(password)
-        return user
 
 
 # Register extensions listed in the settings
