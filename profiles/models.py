@@ -102,7 +102,7 @@ class BasePasswordChangeForm(forms.ModelForm):
        return user
 
 
-class BaseProfileAdminForm(BasePasswordChangeForm):
+class ProfileAdminForm(BasePasswordChangeForm):
 
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
@@ -118,7 +118,6 @@ class BaseProfileAdminForm(BasePasswordChangeForm):
 
 
 class ProfileAdmin(ModelAdmin):
-    add_form_template = None
     fieldsets = [
         (None, {
             'fields': ['email', #'password1', 'password2', 
@@ -138,32 +137,29 @@ class ProfileAdmin(ModelAdmin):
     search_fields = ['first_name', 'last_name', 'email']
     ordering = ['email',]
 
-    #def get_fieldsets(self, request, obj=None):
-    #    # Delay adding the password fields as they cause validation errors
-    #    fieldsets =  super(ProfileAdmin, self).get_fieldsets(request, obj=obj)
-    #    # Insert the password fields  
-    #    fieldsets[0][1]['fields'][1:1] = ['password1', 'password2']
-
-    #    return fieldsets
+    required_fields = ['email', 'first_name', 'last_name']
 
     def get_form(self, request, obj=None, **kwargs):
-        # Delay creation of the ProfileAdminForm until we have a 'final'
-        # model to base it on
-
-        class ProfileAdminForm(BaseProfileAdminForm):
-            class Meta:
-                model = Profile
+        # Delay setting the ProfileAdminForm.
+        # If form is added to the model then it cause validation error due to 
+        # the fields not form fields and admin fieldsets not being consistent.
         self.form = ProfileAdminForm
 
-        # TODO: Delay adding the password fields as they cause validation errors
-        if not 'password1' in self.fieldsets[0][1]['fields']:
-            self.fieldsets[0][1]['fields'][1:1] = ['password1', 'password2']
+        # Delay adding the password fields until the form is set.
+        fields = self.fieldsets[0][1]['fields']
+        try:
+            index = fields.index('email') + 1
+        except ValueError:
+            index = len(fields)
+        if not 'password1' in fields:
+            fields[index:index] = ['password1', 'password2']
 
+        # Create the form 
         form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
 
-        form.base_fields['email'].required = True
-        form.base_fields['first_name'].required = True
-        form.base_fields['last_name'].required = True
+        for fname in []:
+            form.base_fields[fname].required = True
+
         return form
 
     def save_form(self, request, form, change):

@@ -7,13 +7,13 @@ from profiles.models import Profile, BasePasswordChangeForm
 
 
 try:
-    user_model = get_model(*settings.CUSTOM_USER_MODEL.split('.', 2))
+    User = get_model(*settings.CUSTOM_USER_MODEL.split('.', 2))
 except AttributeError:
-    from django.contrib.auth.models import User as user_model
+    from django.contrib.auth.models import User
 
 class UserChangeForm(BasePasswordChangeForm):
     class Meta:
-        model = user_model
+        model = User
 
 class ProfileForm(UserChangeForm):
     class Meta:
