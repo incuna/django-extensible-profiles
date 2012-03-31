@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Address(models.Model):
     primary = models.BooleanField(default=False)
+    name = models.CharField(max_length=255, verbose_name=_('name'), null=True, blank=True)
     address1 = models.CharField(max_length=255, verbose_name=_('address'), null=True, blank=True)
     address2 = models.CharField(max_length=255, verbose_name=_('address 2'), null=True, blank=True)
     city = models.CharField(max_length=255, verbose_name=_('town/city'), null=True, blank=True)
@@ -17,4 +18,4 @@ class Address(models.Model):
         verbose_name_plural = 'addresses'
 
     def __unicode__(self):
-        return self.address1
+        return self.name or self.address1
