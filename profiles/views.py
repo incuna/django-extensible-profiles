@@ -40,5 +40,5 @@ class ProfileEdit(UpdateView):
         return self.request.user.profile
 
     def get_success_url(self):
-        return self.request.GET.get('next', reverse('profile'))
+        return self.request.GET.get('next', self.success_url or reverse('profile'))
 
