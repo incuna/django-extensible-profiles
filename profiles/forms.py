@@ -28,9 +28,12 @@ class ProfileForm(EmailFormMixin, BasePasswordChangeForm):
             'user_permissions',
             'username',
         )
+    make_required = ('first_name', 'last_name', 'email',)
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
-        self.fields['email'].required = True
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
+        for fname in self.make_required:
+            try:
+                self.fields[fname].required = True
+            except KeyError:
+                pass
