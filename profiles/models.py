@@ -90,8 +90,10 @@ class BasePasswordChangeForm(forms.ModelForm):
        if password1 != password2:
            msg = u'The password fields did not match.'
            self._errors['password2'] = ErrorList([msg])
-           del cleaned_data['password1']
-           del cleaned_data['password2']
+           if 'password1' in cleaned_data.keys():
+               del cleaned_data['password1']
+           if 'password2' in cleaned_data.keys():
+               del cleaned_data['password2']
 
        return cleaned_data
 
