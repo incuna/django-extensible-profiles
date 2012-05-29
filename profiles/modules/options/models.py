@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from orderable import Orderable
+from orderable.models import Orderable
 
 class Option(Orderable):
     """
