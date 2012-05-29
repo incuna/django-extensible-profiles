@@ -19,15 +19,15 @@ extensions are standard python modules with a `register()` method which will be
 called upon registering the extension. The `register()` method receives the
 `Profile` class itself and the model admin class `ProfileAdmin` as arguments.
 
-To register extensions, simply pop a list of them in your settings.py:
-
-    PROFILE_EXTENSIONS = ('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
-
-For backwards compatibility, extensions can be activated by adding the
-following to a models.py file that will be processed anyway. eg:
+There are two ways to set up the extensions. Either you can use the FeinCMS
+approach of registering extensions directly:
 
     from profiles.models import Profile
     Profile.register_extensions('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
+
+or you can simply use a setting:
+
+    PROFILE_EXTENSIONS = ('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
 
 If the extension requires it's own models (like the options extension) then the
 app containing the models will also need to be added to your `INSTALLED_APPS`.
