@@ -58,3 +58,5 @@ Here is the address extension (profiles/extensions/address.py):
 ### Dependencies
 
 The address extension requires [`incuna-countries`](http://github.com/incuna/incuna-countries). Add `countries` to your `INSTALLED_APPS`.
+
+The options and notification extensions require [`django-orderable`](http://github.com/incuna/django-orderable). Add `orderable` to your `INSTALLED_APPS`.

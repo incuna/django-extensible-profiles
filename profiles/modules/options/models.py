@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from incuna.db.models import Orderable
+from orderable import Orderable
 
 class Option(Orderable):
     """

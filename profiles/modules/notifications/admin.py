@@ -1,7 +1,9 @@
 from django.contrib import admin
-from django.contrib.admin.options import *
-from incuna.admin.order import OrderableAdmin
-from models import Notification
+
+from orderable.admin import OrderableAdmin
+
+from .models import Notification
+
 
 class NotificationOptions(OrderableAdmin):
     prepopulated_fields = {'slug': ('name',)}

@@ -1,8 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from incuna.db.models import Orderable
+from orderable.models import Orderable
 from profiles.models import Profile
+
 
 class ProfileFieldsChoices(object):
     """
