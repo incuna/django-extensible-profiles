@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import get_callable
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from incuna.utils.unique_id import generate_id
+from unique_id import generate_id
 
 ModelAdmin = get_callable(getattr(settings, 'PROFILE_MODELADMIN_CLASS', 'django.contrib.admin.ModelAdmin'))
 if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
@@ -184,4 +184,3 @@ PROFILE_EXTENSIONS = getattr(settings, 'PROFILE_EXTENSIONS', None)
 if PROFILE_EXTENSIONS and not Profile._extensions_imported:
     Profile.register_extensions(*PROFILE_EXTENSIONS)
     Profile._extensions_imported = True
-

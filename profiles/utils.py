@@ -16,4 +16,3 @@ def class_view_decorator(function_decorator):
         return View
 
     return simple_decorator
-

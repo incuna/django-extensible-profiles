@@ -2,15 +2,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, get_callable
 from django.views.generic import TemplateView, UpdateView
-from incuna.utils import get_class_from_path
 
 from profiles.models import Profile
 from profiles.utils import class_view_decorator
 
 try:
-    ProfileForm = get_class_from_path(settings.PROFILE_FORM_CLASS)
+    ProfileForm = get_callable(settings.PROFILE_FORM_CLASS)
 except AttributeError:
     from forms import ProfileForm
 
