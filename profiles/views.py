@@ -6,10 +6,8 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse, get_callable
 from django.views.generic import TemplateView, CreateView, UpdateView
 
-from incuna.utils.unique_id import generate_id
-
 from profiles.models import Profile
-from profiles.utils import class_view_decorator
+from profiles.utils import class_view_decorator, generate_id
 
 try:
     ProfileForm = get_callable(settings.PROFILE_FORM_CLASS)
