@@ -1,15 +1,15 @@
 ## Extensible user profiles for Django
 
-This is an extensible user profile system for Django, designed to provide a
-simple user Profile model that is extensible.
+This project provides a base `Profile` model that relates to the built-in `auth.User` model and provides hooks for adding any number of feature extensions. A number of example extensions (address details, avatar, etc) are included.
 
-The concept (and some code) is borrowed from the [FeinCMS](https://github.com/feincms/feincms) page model.
+The basic concept (and some code) is borrowed from the [FeinCMS](https://github.com/feincms/feincms) Page model.
 
-To use the profiles module add profiles to your `INSTALLED_APPS`.
+### Usage
 
-Before proceeding with manage.py syncdb, you must add some profile extensions.
+To use the profiles module add `profiles` to `INSTALLED_APPS` in your django settings file.
+
+Before proceeding with `manage.py syncdb`, you must add some profile extensions.
 The profiles module does not add anything to the User model by default.
-
 
 ### Profile extension modules
 
@@ -19,7 +19,7 @@ called upon registering the extension. The `register()` method receives the
 `Profile` class itself and the model admin class `ProfileAdmin` as arguments.
 
 There are two ways to set up the extensions. Either you can use the FeinCMS
-approach of registering extensions directly:
+approach of registering extensions directly (this should go in your models.py):
 
     from profiles.models import Profile
     Profile.register_extensions('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
@@ -28,13 +28,13 @@ or you can simply use a setting:
 
     PROFILE_EXTENSIONS = ('title', 'picture', 'address', 'profiles.modules.options.extensions.options')
 
-If the extension requires it's own models (like the options extension) then the
+If the extension requires its own models (like the options extension) then the
 app containing the models will also need to be added to your `INSTALLED_APPS`.
 
 ### Adding extensions
 
 To add an extension create a python module that defines a register function
-that accepts the `Profile class` and the `ProfileAdmin` class as arguments and
+which accepts the `Profile` class and the `ProfileAdmin` class as arguments and
 modifies them as required.
 
 Here is the address extension (`profiles/extensions/address.py`):
