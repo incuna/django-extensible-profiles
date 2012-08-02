@@ -20,14 +20,12 @@ class ProfileFactory(UserFactory):
 class ProfileUtils(object):
     def generate_profile(self, **kwargs):
         password = kwargs.pop('password', 'test')
-        if 'username' not in kwargs:
-            kwargs['username'] = 'user%d' % Profile.objects.count()
-        profile = ProfileFactory(**kwargs)
+        profile = ProfileFactory.build(**kwargs)
         profile.set_password(password)
         profile.save()
         return profile
 
     def login(self, user=None, password='test'):
         user = user or self.user
-        self.client.login(username=self.user.username, password=password)
+        self.client.login(username=user.username, password=password)
 
