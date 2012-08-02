@@ -1,23 +1,33 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
-
-Replace these with more appropriate tests for your application.
-"""
-
+from django.contrib.auth.models import User
 from django.test import TestCase
+import factory
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
+from .models import Profile
 
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
 
->>> 1 + 1 == 2
-True
-"""}
+class UserFactory(factory.Factory):
+    FACTORY_FOR = User
+    first_name = factory.Sequence(lambda n: 'Firstname {0}'.format(n))
+    last_name = factory.Sequence(lambda n: 'Lastname {0}'.format(n))
+    username = factory.Sequence(lambda n: 'user-{0}'.format(n).lower())
+    email = factory.LazyAttribute(lambda a: '{0}@example.com'.format(a.username).lower())
+
+
+class ProfileFactory(UserFactory):
+    FACTORY_FOR = Profile
+
+
+class ProfileUtils(object):
+    def generate_profile(self, **kwargs):
+        password = kwargs.pop('password', 'test')
+        if 'username' not in kwargs:
+            kwargs['username'] = 'user%d' % Profile.objects.count()
+        profile = ProfileFactory(**kwargs)
+        profile.set_password(password)
+        profile.save()
+        return profile
+
+    def login(self, user=None, password='test'):
+        user = user or self.user
+        self.client.login(username=self.user.username, password=password)
 
