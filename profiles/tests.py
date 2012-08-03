@@ -15,6 +15,7 @@ class UserFactory(factory.Factory):
 
 class ProfileFactory(UserFactory):
     FACTORY_FOR = Profile
+    user_ptr = factory.SubFactory(UserFactory)
 
 
 class ProfileUtils(object):
