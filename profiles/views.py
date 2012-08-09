@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse, get_callable
 from django.views.generic import TemplateView, CreateView, UpdateView
 
 from profiles.models import Profile
+from profiles.signals import user_registered, user_updated
 from profiles.utils import class_view_decorator, generate_id
 
 try:
@@ -54,6 +55,8 @@ class RegisterView(CreateView):
 
         obj.save()
 
+        user_registered.send(sender=self.__class__, user=obj, request=self.request, form=form)
+
         if password:
             user = authenticate(username=form.cleaned_data['username'], password=password)
             messages.info(self.request, 'Your profile has been created.')
@@ -68,6 +71,7 @@ class ProfileEdit(UpdateView):
 
     def form_valid(self, form):
         response = super(ProfileEdit, self).form_valid(form)
+        user_updated.send(sender=self.__class__, user=self.request.user, request=self.request, form=form)
         messages.info(self.request, 'Your profile has been updated.')
         return response
 
