@@ -10,27 +10,37 @@ from profiles.models import Profile
 from profiles.signals import user_registered, user_updated
 from profiles.utils import class_view_decorator, generate_id
 
-try:
-    ProfileForm = get_callable(settings.PROFILE_FORM_CLASS)
-except AttributeError:
-    from forms import ProfileForm
-
-try:
-    RegistrationForm = get_callable(settings.REGISTRATION_FORM_CLASS)
-except AttributeError:
-    RegistrationForm = ProfileForm
-
 
 @class_view_decorator(login_required)
 class ProfileView(TemplateView):
     template_name = 'profiles/profile.html'
 
 
-class RegisterView(CreateView):
-    form_class = RegistrationForm
+class ProfleFormMixin(object):
+    def get_form_class(self):
+        # Delay defining the ProfileForm to ensure that the model has been
+        # defined (with all extensions).
+        try:
+            ProfileForm = get_callable(settings.PROFILE_FORM_CLASS)
+        except AttributeError:
+            from .forms import ProfileForm
+        return ProfileForm
+
+
+class RegisterView(ProfleFormMixin, CreateView):
     template_name = 'profiles/profile_form.html'
     success_url = getattr(settings, 'REGISTRATION_COMPLETE_URL',
         settings.LOGIN_REDIRECT_URL)
+
+    def get_form_class(self):
+        # Delay defining the form to ensure that the model has been
+        # defined (with all extensions).
+        try:
+            RegistrationForm = get_callable(settings.REGISTRATION_FORM_CLASS)
+        except AttributeError:
+            RegistrationForm = super(RegisterView, self).get_form_class()
+
+        return RegistrationForm
 
     def form_valid(self, form):
         if not 'username' in form.cleaned_data:
@@ -66,9 +76,7 @@ class RegisterView(CreateView):
 
 
 @class_view_decorator(login_required)
-class ProfileEdit(UpdateView):
-    form_class = ProfileForm
-
+class ProfileEdit(ProfleFormMixin, UpdateView):
     def form_valid(self, form):
         response = super(ProfileEdit, self).form_valid(form)
         user_updated.send(sender=self.__class__, user=self.request.user, request=self.request, form=form)
@@ -87,4 +95,3 @@ class ProfileEdit(UpdateView):
 
     def get_success_url(self):
         return self.request.GET.get('next', self.success_url or reverse('profile'))
-
