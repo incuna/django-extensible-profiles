@@ -18,6 +18,9 @@ class ProfileView(TemplateView):
 
 class ProfleFormMixin(object):
     def get_form_class(self):
+        if self.form_class:
+            return self.form_class
+
         # Delay defining the ProfileForm to ensure that the model has been
         # defined (with all extensions).
         try:
@@ -33,6 +36,9 @@ class RegisterView(ProfleFormMixin, CreateView):
         settings.LOGIN_REDIRECT_URL)
 
     def get_form_class(self):
+        if self.form_class:
+            return self.form_class
+
         # Delay defining the form to ensure that the model has been
         # defined (with all extensions).
         try:
