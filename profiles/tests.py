@@ -28,6 +28,16 @@ class ProfileFactory(UserFactory):
     user_ptr = factory.SubFactory(UserFactory)
 
 
+class UserWithProfileFactory(ProfileFactory):
+    """
+    Return a user object that has a profile.
+    """
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        profile = super(UserWithProfileFactory, cls)._prepare(create, **kwargs)
+        return profile.user_ptr
+
+
 class ProfileUtils(object):
     def generate_profile(self, **kwargs):
         password = kwargs.pop('password', 'test')
