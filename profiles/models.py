@@ -6,6 +6,7 @@ from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from unique_id import generate_id
 
+
 ModelAdmin = get_callable(getattr(settings, 'PROFILE_MODELADMIN_CLASS', 'django.contrib.admin.ModelAdmin'))
 if getattr(settings, 'AUTH_PROFILE_MODULE', False) and settings.AUTH_PROFILE_MODULE == "profiles.Profile":
     def get_profile(self):
@@ -48,7 +49,7 @@ class Profile(User):
                     try:
                         fn = get_callable(ext + '.register', False)
                     except ImportError:
-                        fn = get_callable('%s.%s.register' % ( here_path, ext ), False)
+                        fn = get_callable('%s.%s.register' % (here_path, ext), False)
                 # Not a string, so take our chances and just try to access "register"
                 else:
                     fn = ext.register
@@ -73,45 +74,42 @@ class Profile(User):
     def get_profile(self):
         return self
 
+
 # This form is here to avoid a cyclic import between models and forms
 class BasePasswordChangeForm(forms.ModelForm):
-    """
-    Model form that includes password fields and sets password on save.
-    """
+    """Model form that includes password fields and sets password on save."""
     password1 = forms.CharField(label=_('Password'), required=False,
                                 widget=forms.PasswordInput)
     password2 = forms.CharField(label=_('Password confirmation'),
                                 required=False, widget=forms.PasswordInput)
 
     def clean(self):
-       cleaned_data = self.cleaned_data
-       password1 = cleaned_data.get('password1', '')
-       password2 = cleaned_data.get('password2', '')
-       if password1 != password2:
-           msg = u'The password fields did not match.'
-           self._errors['password2'] = ErrorList([msg])
-           if 'password1' in cleaned_data.keys():
-               del cleaned_data['password1']
-           if 'password2' in cleaned_data.keys():
-               del cleaned_data['password2']
+        cleaned_data = self.cleaned_data
+        password1 = cleaned_data.get('password1', '')
+        password2 = cleaned_data.get('password2', '')
+        if password1 != password2:
+            msg = u'The password fields did not match.'
+            self._errors['password2'] = ErrorList([msg])
+            if 'password1' in cleaned_data.keys():
+                del cleaned_data['password1']
+            if 'password2' in cleaned_data.keys():
+                del cleaned_data['password2']
 
-       return cleaned_data
+        return cleaned_data
 
     def save(self, commit=True):
-       user = super(BasePasswordChangeForm, self).save(commit=False)
-       password = self.cleaned_data.get('password1', None)
-       if password:
-           user.set_password(password)
-       if commit:
-           user.save()
-           self.save_m2m()
-       return user
+        user = super(BasePasswordChangeForm, self).save(commit=False)
+        password = self.cleaned_data.get('password1', None)
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
 
 
 class EmailFormMixin(object):
-    """
-    Form mixin to ensure that the email is unique.
-    """
+    """Form mixin to ensure that the email is unique."""
     def clean_email(self):
         """Prevent account hijacking by disallowing duplicate emails."""
         email = self.cleaned_data.get('email', None)
@@ -131,33 +129,34 @@ class ProfileAdminForm(EmailFormMixin, BasePasswordChangeForm):
 
 class ProfileAdmin(ModelAdmin):
     fieldsets = [
-        (None, {
-            'fields': ['email', 'first_name','last_name',  ]
-        }),
-        (_('Other options'), {
-            'classes': ['collapse',],
-            'fields': ['is_active', 'last_login', 'date_joined',],
-        }),
+        (
+            None,
+            {'fields': ['email', 'first_name', 'last_name']}
+        ),
+        (
+            _('Other options'),
+            {
+                'classes': ['collapse'],
+                'fields': ['is_active', 'last_login', 'date_joined'],
+            }
+        ),
     ]
-    list_display = ['email', 'first_name', 'last_name', ]
-    list_display_links = ['email',]
-    search_fields = ['email',  'first_name', 'last_name',]
-    readonly_fields = ['last_login', 'date_joined', ]
-    list_filter = ['is_active', ]
+    list_display = ['email', 'first_name', 'last_name']
+    list_display_links = ['email']
+    search_fields = ['email', 'first_name', 'last_name']
+    readonly_fields = ['last_login', 'date_joined']
+    list_filter = ['is_active']
     list_display_filter = []
     search_fields = ['first_name', 'last_name', 'email']
-    ordering = ['email',]
-
+    ordering = ['email']
     required_fields = ['email', 'first_name', 'last_name']
 
     def get_form(self, request, obj=None, **kwargs):
-
         if not issubclass(self.form, ProfileAdminForm):
             # Delay setting the ProfileAdminForm.
-            # If form is added to the ProfileAdmin class then it cause 
-            # validation error due to the form fields and admin fieldsets 
+            # If form is added to the ProfileAdmin class then it cause
+            # validation error due to the form fields and admin fieldsets
             # not being consistent.
-
             self.form = ProfileAdminForm
 
             # Delay adding the password fields until the form is set.
@@ -169,7 +168,7 @@ class ProfileAdmin(ModelAdmin):
             if not 'password1' in fields:
                 fields[index:index] = ['password1', 'password2']
 
-        # Create the form 
+        # Create the form
         form = super(ProfileAdmin, self).get_form(request, obj=obj, **kwargs)
 
         # Set required fields
