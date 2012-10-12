@@ -60,6 +60,13 @@ class Profile(User):
                 raise
 
     def save(self, *args, **kwargs):
+        # Remove leading and trailing whitespace from name.
+        try:
+            self.first_name = self.first_name.strip()
+            self.last_name = self.last_name.strip()
+        except AttributeError:
+            pass
+
         if not self.username:
             self.username = generate_id(first_name=self.first_name,
                                         last_name=self.last_name, email=self.email)
