@@ -9,11 +9,11 @@ from .models import Code
 class CodeField(fields.CharField):
     re_clean_code = re.compile('[^a-zA-Z0-9]+')
 
-    def validate(self, value):
-        super(CodeField, self).validate(value)
-
-        value = self.re_clean_code.sub('', value)
+    def to_python(self, value):
         try:
-            Code.objects.get(code=value)
-        except Code.DoesNotExist:
+            key = 'code'
+            value = self.re_clean_code.sub('', value)
+            value = Code.objects.get(**{key: value})
+        except (ValueError, Code.DoesNotExist):
             raise exceptions.ValidationError('Enter a valid registration code.')
+        return value

@@ -5,7 +5,7 @@ class Code(models.Model):
     """
     Registration codes
     """
-    code = models.CharField(max_length=8)
+    code = models.CharField(max_length=255)
 
     class Meta:
         app_label = 'profiles'
