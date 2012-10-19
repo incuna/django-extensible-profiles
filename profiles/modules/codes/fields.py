@@ -11,7 +11,7 @@ class CodeField(fields.CharField):
 
     def to_python(self, value):
         try:
-            key = 'code'
+            key = 'code__iexact'
             value = self.re_clean_code.sub('', value)
             value = Code.objects.get(**{key: value})
         except (ValueError, Code.DoesNotExist):
