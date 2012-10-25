@@ -13,6 +13,3 @@ def register(cls, admin_cls):
                     'fields': ['code',],
                     'classes': ('collapse',),
                 }))
-
-        if admin_cls.filter_horizontal:
-            admin_cls.filter_horizontal = admin_cls.filter_horizontal + ('code',)
