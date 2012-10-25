@@ -4,7 +4,8 @@ from .models import Code
 
 
 class CodeAdmin(admin.ModelAdmin):
-    fields = ('code',)
+    list_display = ('code', 'is_active',)
+    list_filter = ('is_active',)
     search_fields = ('code',)
     ordering = ['code']
 

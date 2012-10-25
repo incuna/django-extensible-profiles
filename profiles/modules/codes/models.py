@@ -6,6 +6,7 @@ class Code(models.Model):
     Registration codes
     """
     code = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         app_label = 'profiles'
