@@ -62,6 +62,7 @@ class CodeAdmin(admin.ModelAdmin):
                 number = form.cleaned_data.get('number')
                 length = form.cleaned_data.get('length')
                 for i in range(number):
+                    # Generate a random string of ascii_uppercase case chars and digits
                     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(length))
                     Code.objects.create(code=code, is_active=True)
 
