@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block content %}{{ block.super }}
-    <form action="{% url "admin:code_auto_generate" %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url "admin:code_auto_generate" %}" method="POST">
         {% csrf_token %}
         <fieldset class="module ">
             <legend>{% blocktrans with cl.opts.verbose_name_plural as name %}Auto generate {{ name }}{% endblocktrans %}:</legend>
