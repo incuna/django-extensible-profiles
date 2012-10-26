@@ -1,0 +1,15 @@
+{% extends "admin/change_list.html" %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block content %}{{ block.super }}
+    <form action="{% url "admin:code_auto_generate" %}" method="POST">
+        {% csrf_token %}
+        <fieldset class="module ">
+            <legend>{% blocktrans with cl.opts.verbose_name_plural as name %}Auto generate {{ name }}{% endblocktrans %}:</legend>
+            {{ auto_generate_form.as_p }}
+            <p><input type="submit" value="{% trans "Add" %}"></p>
+        </fieldset>
+    </form>
+{% endblock %}
