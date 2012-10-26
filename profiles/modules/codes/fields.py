@@ -14,9 +14,8 @@ class CodeField(fields.CharField):
             return value
 
         try:
-            key = 'code__iexact'
             value = self.re_clean_code.sub('', value)
-            value = Code.objects.get(**{key: value, 'is_active': True})
-        except (ValueError, Code.DoesNotExist):
+            value = Code.objects.get(code__iexact=value, is_active=True)
+        except Code.DoesNotExist:
             raise exceptions.ValidationError('Enter a valid registration code.')
         return value
