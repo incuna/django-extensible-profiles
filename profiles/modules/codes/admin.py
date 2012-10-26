@@ -18,7 +18,7 @@ class AutoGenerateForm(forms.Form):
             label=_('Length of codes to generate'),
             initial=8,
             max_value=255,
-            min_value=0)
+            min_value=1)
 
 
 class CodeAdmin(admin.ModelAdmin):
@@ -53,7 +53,6 @@ class CodeAdmin(admin.ModelAdmin):
 
     @csrf_protect_m
     def auto_generate(self, request):
-        print 'auto_generate'
         if request.method == 'POST':
             if not self.has_add_permission(request):
                 raise PermissionDenied
@@ -62,12 +61,23 @@ class CodeAdmin(admin.ModelAdmin):
                 number = form.cleaned_data.get('number')
                 length = form.cleaned_data.get('length')
                 for i in range(number):
-                    # Generate a random string of ascii_uppercase case chars and digits
-                    code = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(length))
+                    code = CodeAdmin.generate_code(length)
+                    while True:
+                        code = CodeAdmin.generate_code(length)
+                        if not Code.objects.filter(code=code).count():
+                            break
+
                     Code.objects.create(code=code, is_active=True)
 
             else:
                 return self.changelist_view(request, extra_context={'auto_generate_form': form})
 
         return HttpResponseRedirect(reverse('admin:profiles_code_changelist'))
+
+    @staticmethod
+    def generate_code(length):
+        """Generate a random string of ascii_uppercase case chars and digits."""
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(length))
+
+
 admin.site.register(Code, CodeAdmin)
