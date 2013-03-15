@@ -4,6 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse, get_callable
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, CreateView, UpdateView
 
 from profiles.models import Profile
@@ -32,8 +33,7 @@ class ProfleFormMixin(object):
 
 class RegisterView(ProfleFormMixin, CreateView):
     template_name = 'profiles/profile_form.html'
-    success_url = getattr(settings, 'REGISTRATION_COMPLETE_URL',
-        settings.LOGIN_REDIRECT_URL)
+    success_url = getattr(settings, 'REGISTRATION_COMPLETE_URL', settings.LOGIN_REDIRECT_URL)
 
     def get_form_class(self):
         if self.form_class:
@@ -75,7 +75,7 @@ class RegisterView(ProfleFormMixin, CreateView):
 
         if password:
             user = authenticate(username=form.cleaned_data['username'], password=password)
-            messages.info(self.request, 'Your profile has been created.')
+            messages.info(self.request, _('Your profile has been created.'))
             login(self.request, user)
 
         return super(RegisterView, self).form_valid(form)
@@ -86,7 +86,7 @@ class ProfileEdit(ProfleFormMixin, UpdateView):
     def form_valid(self, form):
         response = super(ProfileEdit, self).form_valid(form)
         user_updated.send(sender=self.__class__, user=self.request.user, request=self.request, form=form)
-        messages.info(self.request, 'Your profile has been updated.')
+        messages.info(self.request, _('Your profile has been updated.'))
         return response
 
     def get_context_data(self, **kwargs):

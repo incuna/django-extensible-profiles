@@ -1,0 +1,202 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: django-extensible-profiles\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-03-15 15:01+0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: James Turnbull <james@incuna.com>\n"
+"Language-Team: \n"
+"Language: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#: models.py:88
+msgid "Password"
+msgstr "Passwort"
+
+#: models.py:90
+#, fuzzy
+msgid "Password confirmation"
+msgstr "Passwort zurücksetzen"
+
+#: models.py:129
+msgid "That email address is already in use."
+msgstr ""
+
+#: models.py:144 extensions/modified.py:13
+msgid "Other options"
+msgstr ""
+
+#: views.py:78
+#, fuzzy
+msgid "Your profile has been created."
+msgstr "Ihre Frage wurde gesendet."
+
+#: views.py:89
+#, fuzzy
+msgid "Your profile has been updated."
+msgstr "Ihre Frage wurde gesendet."
+
+#: extensions/address.py:12 modules/addresses/models.py:8
+#, fuzzy
+msgid "address"
+msgstr "Arbeitsaddresse"
+
+#: extensions/address.py:13 modules/addresses/models.py:9
+msgid "address 2"
+msgstr ""
+
+#: extensions/address.py:14 modules/addresses/models.py:10
+msgid "town/city"
+msgstr ""
+
+#: extensions/address.py:15 modules/addresses/models.py:11
+msgid "county/state/province"
+msgstr ""
+
+#: extensions/address.py:16 modules/addresses/models.py:12
+msgid "postcode"
+msgstr ""
+
+#: extensions/address.py:18 modules/addresses/models.py:14
+msgid "telephone"
+msgstr ""
+
+#: extensions/address.py:25
+#, fuzzy
+msgid "Address"
+msgstr "Arbeitsaddresse"
+
+#: extensions/permissions.py:9
+#, fuzzy
+msgid "Permissions"
+msgstr "Fragen"
+
+#: extensions/picture.py:5
+#, fuzzy
+msgid "your picture"
+msgstr "Ihr Prozentwert:"
+
+#: extensions/title.py:13
+msgid "title"
+msgstr ""
+
+#: modules/addresses/models.py:7
+#, fuzzy
+msgid "name"
+msgstr "Nachname"
+
+#: modules/addresses/extensions/addresses.py:12
+msgid "Other addresses"
+msgstr ""
+
+#: modules/codes/admin.py:16
+msgid "Number of codes to generate"
+msgstr ""
+
+#: modules/codes/admin.py:18
+msgid "Length of codes to generate"
+msgstr ""
+
+#: modules/codes/extensions/codes.py:6 modules/codes/extensions/codes.py:12
+msgid "Registration code"
+msgstr ""
+
+#: modules/codes/templates/admin/profiles/code/change_list.html:10
+#, python-format
+msgid "Auto generate %(name)s"
+msgstr ""
+
+#: modules/codes/templates/admin/profiles/code/change_list.html:12
+msgid "Add"
+msgstr ""
+
+#: modules/notifications/models.py:42
+msgid "Name of the Profile field required for this notification."
+msgstr ""
+
+#: modules/notifications/extensions/notifications.py:5
+#, fuzzy
+msgid "Keep me up-to-date"
+msgstr "Halten Sie mich auf dem Laufenden über"
+
+#: modules/notifications/extensions/notifications.py:13
+msgid "Notifications"
+msgstr ""
+
+#: modules/options/extensions/options.py:5
+#: modules/options/extensions/options.py:11
+msgid "Opt-ins"
+msgstr ""
+
+#: templates/profiles/profile.html:19
+#, fuzzy
+msgid "Login details"
+msgstr "Video Details"
+
+#: templates/profiles/profile.html:24
+msgid "Mobile"
+msgstr "Mobiltelefon"
+
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_form.html:3
+#, fuzzy
+msgid "Documentation"
+msgstr "Dokument"
+
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_form.html:3
+msgid "Change password"
+msgstr ""
+
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_form.html:3
+msgid "Log out"
+msgstr "Abmelden"
+
+#: templates/registration/password_change_done.html:4
+#: templates/registration/password_change_form.html:4
+msgid "Home"
+msgstr "Startseite"
+
+#: templates/registration/password_change_done.html:4
+#: templates/registration/password_change_form.html:4
+#: templates/registration/password_change_form.html:6
+#, fuzzy
+msgid "Password change"
+msgstr "Passwort zurücksetzen"
+
+#: templates/registration/password_change_done.html:6
+#: templates/registration/password_change_done.html:10
+#, fuzzy
+msgid "Password change successful"
+msgstr "Passwort erfolgreich zurückgesetzt"
+
+#: templates/registration/password_change_done.html:12
+msgid "Your password was changed."
+msgstr ""
+
+#: templates/registration/password_change_form.html:11
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: templates/registration/password_change_form.html:16
+msgid "Old password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:18
+msgid "New password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:20
+msgid "Confirm password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:22
+msgid "Change my password"
+msgstr ""
