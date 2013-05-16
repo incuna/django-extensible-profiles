@@ -66,6 +66,8 @@ class RegisterView(ProfleFormMixin, CreateView):
 
         obj = form.save(commit=False)
 
+        obj = self.update_user_object(obj)
+
         if password:
             obj.set_password(password)
 
@@ -79,6 +81,9 @@ class RegisterView(ProfleFormMixin, CreateView):
             login(self.request, user)
 
         return super(RegisterView, self).form_valid(form)
+
+    def update_user_object(self, user):
+        pass
 
 
 @class_view_decorator(login_required)
