@@ -64,7 +64,7 @@ class RegisterView(ProfleFormMixin, CreateView):
         obj = self.update_user_object(obj)
         obj.save()
 
-        user_registered.send(sender=self.__class__, user=obj, request=self.request, form=form)
+        self.send_signals(form, obj)
 
         self.authenticate_new_user(self, self.username, self.password)
 
@@ -85,6 +85,9 @@ class RegisterView(ProfleFormMixin, CreateView):
                 if fname in data:
                     generate_kwargs[fname] = data[fname]
             return generate_id(**generate_kwargs)
+
+    def send_signals(self, form, user):
+        user_registered.send(sender=self.__class__, user=user, request=self.request, form=form)
 
     def update_user_object(self, user):
         if self.password:
