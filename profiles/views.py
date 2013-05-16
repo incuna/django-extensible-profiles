@@ -35,6 +35,13 @@ class RegisterView(ProfleFormMixin, CreateView):
     template_name = 'profiles/profile_form.html'
     success_url = getattr(settings, 'REGISTRATION_COMPLETE_URL', settings.LOGIN_REDIRECT_URL)
 
+    def authenticate_new_user(self, user, password):
+        if password:
+            user = authenticate(username=user.username, password=password)
+            messages.info(self.request, _('Your profile has been created.'))
+            login(self.request, user)
+
+
     def get_form_class(self):
         if self.form_class:
             return self.form_class
@@ -75,10 +82,7 @@ class RegisterView(ProfleFormMixin, CreateView):
 
         user_registered.send(sender=self.__class__, user=obj, request=self.request, form=form)
 
-        if password:
-            user = authenticate(username=form.cleaned_data['username'], password=password)
-            messages.info(self.request, _('Your profile has been created.'))
-            login(self.request, user)
+        self.authenticate_new_user(self, form.cleaned_data['username'], password)
 
         return super(RegisterView, self).form_valid(form)
 
