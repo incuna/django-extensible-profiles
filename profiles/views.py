@@ -56,23 +56,11 @@ class RegisterView(ProfleFormMixin, CreateView):
         return RegistrationForm
 
     def form_valid(self, form):
-        if not 'username' in form.cleaned_data:
-            # auto generate a username
-            generate_kwargs = {}
-            for fname in ['first_name', 'last_name', 'email']:
-                if fname in form.cleaned_data:
-                    generate_kwargs[fname] = form.cleaned_data[fname]
-            form.cleaned_data['username'] = generate_id(**generate_kwargs)
+        self.username = self.get_username(form.cleaned_data)
 
-        # try to get the password
-        password = None
-        for fname in ['password', 'password1', 'password2', 'plain_password']:
-            if fname in form.cleaned_data:
-                password = form.cleaned_data[fname]
-                break
+        self.password = self.get_password(form.cleaned_data)
 
         obj = form.save(commit=False)
-
         obj = self.update_user_object(obj)
 
         if password:
@@ -85,6 +73,22 @@ class RegisterView(ProfleFormMixin, CreateView):
         self.authenticate_new_user(self, form.cleaned_data['username'], password)
 
         return super(RegisterView, self).form_valid(form)
+
+    def get_password(self, data):
+        # try to get the password
+        for fname in ['password', 'password1', 'password2', 'plain_password']:
+            if fname in data:
+                return data[fname]
+        return None
+
+    def get_username(self, data):
+        if not 'username' in data:
+            # auto generate a username
+            generate_kwargs = {}
+            for fname in ['first_name', 'last_name', 'email']:
+                if fname in data:
+                    generate_kwargs[fname] = data[fname]
+            return generate_id(**generate_kwargs)
 
     def update_user_object(self, user):
         return user
