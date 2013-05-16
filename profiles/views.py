@@ -35,6 +35,13 @@ class RegisterView(ProfleFormMixin, CreateView):
     template_name = 'profiles/profile_form.html'
     success_url = getattr(settings, 'REGISTRATION_COMPLETE_URL', settings.LOGIN_REDIRECT_URL)
 
+    def authenticate_new_user(self, user, password):
+        if password:
+            user = authenticate(username=user.username, password=password)
+            messages.info(self.request, _('Your profile has been created.'))
+            login(self.request, user)
+        return user
+
     def get_form_class(self):
         if self.form_class:
             return self.form_class
@@ -49,36 +56,43 @@ class RegisterView(ProfleFormMixin, CreateView):
         return RegistrationForm
 
     def form_valid(self, form):
-        if not 'username' in form.cleaned_data:
+        self.username = self.get_username(form.cleaned_data)
+
+        self.password = self.get_password(form.cleaned_data)
+
+        obj = form.save(commit=False)
+        obj = self.update_user_object(obj)
+        obj.save()
+
+        self.send_signals(form, obj)
+
+        self.authenticate_new_user(self, self.username, self.password)
+
+        return super(RegisterView, self).form_valid(form)
+
+    def get_password(self, data):
+        # try to get the password
+        for fname in ['password', 'password1', 'password2', 'plain_password']:
+            if fname in data:
+                return data[fname]
+        return None
+
+    def get_username(self, data):
+        if not 'username' in data:
             # auto generate a username
             generate_kwargs = {}
             for fname in ['first_name', 'last_name', 'email']:
-                if fname in form.cleaned_data:
-                    generate_kwargs[fname] = form.cleaned_data[fname]
-            form.cleaned_data['username'] = generate_id(**generate_kwargs)
+                if fname in data:
+                    generate_kwargs[fname] = data[fname]
+            return generate_id(**generate_kwargs)
 
-        # try to get the password
-        password = None
-        for fname in ['password', 'password1', 'password2', 'plain_password']:
-            if fname in form.cleaned_data:
-                password = form.cleaned_data[fname]
-                break
+    def send_signals(self, form, user):
+        user_registered.send(sender=self.__class__, user=user, request=self.request, form=form)
 
-        obj = form.save(commit=False)
-
-        if password:
-            obj.set_password(password)
-
-        obj.save()
-
-        user_registered.send(sender=self.__class__, user=obj, request=self.request, form=form)
-
-        if password:
-            user = authenticate(username=form.cleaned_data['username'], password=password)
-            messages.info(self.request, _('Your profile has been created.'))
-            login(self.request, user)
-
-        return super(RegisterView, self).form_valid(form)
+    def update_user_object(self, user):
+        if self.password:
+            user.set_password(self.password)
+        return user
 
 
 @class_view_decorator(login_required)
