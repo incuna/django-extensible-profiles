@@ -40,7 +40,7 @@ class RegisterView(ProfleFormMixin, CreateView):
             user = authenticate(username=user.username, password=password)
             messages.info(self.request, _('Your profile has been created.'))
             login(self.request, user)
-            return user
+        return user
 
     def get_form_class(self):
         if self.form_class:
