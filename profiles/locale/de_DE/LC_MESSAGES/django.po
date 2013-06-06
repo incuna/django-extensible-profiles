@@ -18,124 +18,114 @@ msgid "Password"
 msgstr "Passwort"
 
 #: models.py:90
-#, fuzzy
 msgid "Password confirmation"
-msgstr "Passwort zurücksetzen"
+msgstr "Passwort Bestätigung"
 
 #: models.py:129
 msgid "That email address is already in use."
-msgstr ""
+msgstr "Diese Email Adresse ist bereits in Gebrauch."
 
 #: models.py:144 extensions/modified.py:13
 msgid "Other options"
-msgstr ""
+msgstr "Andere Optionen"
 
 #: views.py:78
-#, fuzzy
 msgid "Your profile has been created."
-msgstr "Ihre Frage wurde gesendet."
+msgstr "Ihr Profil ist erstellt worden."
 
 #: views.py:89
-#, fuzzy
 msgid "Your profile has been updated."
-msgstr "Ihre Frage wurde gesendet."
+msgstr "Ihr Profil ist aktualisiert."
 
 #: extensions/address.py:12 modules/addresses/models.py:8
-#, fuzzy
 msgid "address"
-msgstr "Arbeitsaddresse"
+msgstr "Adresse"
 
 #: extensions/address.py:13 modules/addresses/models.py:9
 msgid "address 2"
-msgstr ""
+msgstr "Adresse 2"
 
 #: extensions/address.py:14 modules/addresses/models.py:10
 msgid "town/city"
-msgstr ""
+msgstr "Stadt"
 
 #: extensions/address.py:15 modules/addresses/models.py:11
 msgid "county/state/province"
-msgstr ""
+msgstr "Bundesland"
 
 #: extensions/address.py:16 modules/addresses/models.py:12
 msgid "postcode"
-msgstr ""
+msgstr "Postleitzahl"
 
 #: extensions/address.py:18 modules/addresses/models.py:14
 msgid "telephone"
-msgstr ""
+msgstr "Telefon"
 
 #: extensions/address.py:25
-#, fuzzy
 msgid "Address"
-msgstr "Arbeitsaddresse"
+msgstr "Adresse"
 
 #: extensions/permissions.py:9
-#, fuzzy
 msgid "Permissions"
-msgstr "Fragen"
+msgstr "Berechtigungen"
 
 #: extensions/picture.py:5
-#, fuzzy
 msgid "your picture"
-msgstr "Ihr Prozentwert:"
+msgstr "Ihr Foto"
 
 #: extensions/title.py:13
 msgid "title"
-msgstr ""
+msgstr "Titel"
 
 #: modules/addresses/models.py:7
-#, fuzzy
 msgid "name"
-msgstr "Nachname"
+msgstr "Name"
 
 #: modules/addresses/extensions/addresses.py:12
 msgid "Other addresses"
-msgstr ""
+msgstr "Andere Adressen"
 
 #: modules/codes/admin.py:16
 msgid "Number of codes to generate"
-msgstr ""
+msgstr "Anzahl von Registrierungscodes zu erzeugen"
 
 #: modules/codes/admin.py:18
 msgid "Length of codes to generate"
-msgstr ""
+msgstr "Länge von Registrierungscodes zu erzeugen"
 
 #: modules/codes/extensions/codes.py:6 modules/codes/extensions/codes.py:12
 msgid "Registration code"
-msgstr ""
+msgstr "Registrierungscode"
 
 #: modules/codes/templates/admin/profiles/code/change_list.html:10
 #, python-format
 msgid "Auto generate %(name)s"
-msgstr ""
+msgstr "Automatisch generierte® %(name)s"
 
 #: modules/codes/templates/admin/profiles/code/change_list.html:12
 msgid "Add"
-msgstr ""
+msgstr "Zufügen"
 
 #: modules/notifications/models.py:42
 msgid "Name of the Profile field required for this notification."
-msgstr ""
+msgstr "Name des Profilfeldes notwendig für diese Mitteilung"
 
 #: modules/notifications/extensions/notifications.py:5
-#, fuzzy
 msgid "Keep me up-to-date"
-msgstr "Halten Sie mich auf dem Laufenden über"
+msgstr "Halten Sie mich auf dem Laufenden"
 
 #: modules/notifications/extensions/notifications.py:13
 msgid "Notifications"
-msgstr ""
+msgstr "Mitteilungen"
 
 #: modules/options/extensions/options.py:5
 #: modules/options/extensions/options.py:11
 msgid "Opt-ins"
-msgstr ""
+msgstr "Opt-ins"
 
 #: templates/profiles/profile.html:19
-#, fuzzy
 msgid "Login details"
-msgstr "Video Details"
+msgstr "Anmeldedetails"
 
 #: templates/profiles/profile.html:24
 msgid "Mobile"
@@ -143,14 +133,13 @@ msgstr "Mobiltelefon"
 
 #: templates/registration/password_change_done.html:3
 #: templates/registration/password_change_form.html:3
-#, fuzzy
 msgid "Documentation"
-msgstr "Dokument"
+msgstr "Dokumentation"
 
 #: templates/registration/password_change_done.html:3
 #: templates/registration/password_change_form.html:3
 msgid "Change password"
-msgstr ""
+msgstr "Passwort ändern"
 
 #: templates/registration/password_change_done.html:3
 #: templates/registration/password_change_form.html:3
@@ -165,38 +154,39 @@ msgstr "Startseite"
 #: templates/registration/password_change_done.html:4
 #: templates/registration/password_change_form.html:4
 #: templates/registration/password_change_form.html:6
-#, fuzzy
 msgid "Password change"
-msgstr "Passwort zurücksetzen"
+msgstr "Passwort ändern"
 
 #: templates/registration/password_change_done.html:6
 #: templates/registration/password_change_done.html:10
-#, fuzzy
 msgid "Password change successful"
-msgstr "Passwort erfolgreich zurückgesetzt"
+msgstr "Passwort erfolgreich geändert"
 
 #: templates/registration/password_change_done.html:12
 msgid "Your password was changed."
-msgstr ""
+msgstr "Ihr Passwort ist geändert worden."
 
 #: templates/registration/password_change_form.html:11
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
 msgstr ""
+"Bitte geben Sie zur Sicherheit Ihr altes Passwort ein und dann zweimal Ihr "
+"neues Passwort, so daß wir überprüfen können, daß Sie es korrekt eingegeben "
+"haben."
 
 #: templates/registration/password_change_form.html:16
 msgid "Old password:"
-msgstr ""
+msgstr "Altes Passwort:"
 
 #: templates/registration/password_change_form.html:18
 msgid "New password:"
-msgstr ""
+msgstr "Neues Passwort:"
 
 #: templates/registration/password_change_form.html:20
 msgid "Confirm password:"
-msgstr ""
+msgstr "Passwort bestätigen:"
 
 #: templates/registration/password_change_form.html:22
 msgid "Change my password"
-msgstr ""
+msgstr "Passwort ändern"
